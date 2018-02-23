@@ -23,8 +23,9 @@ class CreateMeetingsTable extends Migration
 			$table->string('urlLogout');
 			$table->string('isRecordingTrue');
 			$table->string('recordID');
-			
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
