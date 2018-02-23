@@ -55,7 +55,7 @@ class BigBlueButtonController extends Controller
 
 	public function createMeeting()
 	{
-		if ( ! $_POST){
+		if ( ! $request->isMethod('post') ){
 			return;
 		}
 
