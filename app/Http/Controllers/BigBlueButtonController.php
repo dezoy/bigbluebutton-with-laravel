@@ -55,10 +55,10 @@ class BigBlueButtonController extends Controller
 
 	public function createMeeting()
 	{
-		if ( ! Auth::check() ) {
-            return response()->json(['error' => 'Unauthorized user']);
-        }
-        $user = Auth::user();
+		// if ( ! Auth::check() ) {
+        //     return response()->json(['error' => 'Unauthorized user']);
+        // }
+        // $user = Auth::user();
 
 		if (count($request->json()->all())) {
 		     $attr = $request->json()->all();
