@@ -36,11 +36,11 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function courses()
-    {
-        return $this->hasMany('App\Models\Course', 'user_id');
-
-    }
+    // public function courses()
+    // {
+    //     return $this->hasMany('App\Models\Course', 'user_id');
+    //
+    // }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
