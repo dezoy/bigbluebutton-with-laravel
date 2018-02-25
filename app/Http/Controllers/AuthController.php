@@ -43,7 +43,7 @@ class AuthController extends Controller
 			'password' => Hash::make($password)
 		]);
         $verification_code = str_random(30);
-
+/*
 		DB::table('user_verifications')->insert([
 			'user_id' => $user->id,
 			'token'   => $verification_code
@@ -54,7 +54,7 @@ class AuthController extends Controller
                 $mail->to($email, $name);
                 $mail->subject("Please verify your email address.");
         });
-
+*/
         return response()->json([
 			'success' => true,
 			'message' => 'Thanks for signing up! Please check your email to complete your registration.'
