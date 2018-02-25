@@ -6,7 +6,7 @@ use Request;
 use Session;
 use Illuminate\Support\Facades\Crypt;
 use App\Utils\BigBlueButtonClass;
-use DB;
+use App\Meeting;
 
 class BigBlueButtonController extends Controller
 {
@@ -63,20 +63,20 @@ class BigBlueButtonController extends Controller
 		$this->attendee_password = Request::get('attendee_password');
 		$this->moderator_password = Request::get('moderator_password');
 		$this->duration =  Request::get('duration');
-		$nextID = DB::table("meetings")->max("id")+1;
+		$nextID = Meeting::max("id")+1;
 	 	$this->meetingID = BigBlueButtonClass::Uuid($nextID);
 
-		DB::table('meetings')->insert(
-			['meetingID' 			=> $this->meetingID,
-			 'meetingName' 			=> $this->meetingName,
-			 'attendee_password' 	=> $this->attendee_password,
-			 'moderator_password' 	=> $this->moderator_password,
-			 'duration' 			=> $this->duration,
-			 'urlLogout' 			=> $this->urlLogout,
-			 'isRecordingTrue' 		=> $this->isRecordingTrue,
-			 'recordID'				=> ''
-			]
-		);
+		Meeting::create([
+			'meeting_id' 		 => $this->meetingID,
+			'user_id' 		     => $this->meetingID,
+			'title' 		 	 => $this->meetingName,
+			'attendee_password'  => $this->attendee_password,
+			'moderator_password' => $this->moderator_password,
+			'duration' 			 => $this->duration,
+			'urlLogout' 		 => $this->urlLogout,
+			'isRecordingTrue' 	 => $this->isRecordingTrue,
+			'record_id'			 => ''
+		]);
 
 		$param['meetingID'] 			= $this->meetingID;
 		$param['meetingName']			= $this->meetingName;
@@ -114,7 +114,9 @@ class BigBlueButtonController extends Controller
 		$param['meetingID'] 		 = $meetingID;
 		$param['moderator_password'] = $password;
 		$response = BigBlueButtonClass::closeMeeting($param);
+
 	 	return redirect('/meeting/list')->with('status', $response->getMessage());
+
 		echo $response->getReturnCode().'<br>';
 		echo $response->getMessageKey().'<br>';
 		echo $response->getMessage().'<br>';
