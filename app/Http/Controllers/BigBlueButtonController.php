@@ -55,20 +55,37 @@ class BigBlueButtonController extends Controller
 
 	public function createMeeting()
 	{
-		if ( ! request()->isMethod('post') ){
-			return;
+		if ( ! Auth::check() ) {
+            return response()->json(['error' => 'Unauthorized user']);
+        }
+        $user = Auth::user();
+
+		if (count($request->json()->all())) {
+		     $attr = $request->json()->all();
 		}
 
-		$this->meetingName = Request::get('meetingName');
-		$this->attendee_password = Request::get('attendee_password');
+		print_r($attr);
+		die();
+
+		$attr = request()->only(['meetingName', 'attendee_password', 'moderator_password']);
+		$valid = Validator::make($attr, [
+            'title'      => 'required|max:255',
+            'student_id' => 'required|integer'
+        ]);
+        if ($valid->fails() ) {
+            return response()->json(['error' => $valid->errors()->all()]);
+        }
+
+		$this->meetingName 		  = Request::get('meetingName');
+		$this->attendee_password  = Request::get('attendee_password');
 		$this->moderator_password = Request::get('moderator_password');
-		$this->duration =  Request::get('duration');
-		$nextID = Meeting::max("id")+1;
+		$this->duration  = Request::get('duration');
+		$nextID 		 = Meeting::max("id")+1;
 	 	$this->meetingID = BigBlueButtonClass::Uuid($nextID);
 
 		Meeting::create([
 			'meeting_id' 		 => $this->meetingID,
-			'user_id' 		     => $this->meetingID,
+			'user_id' 		     => 0,
 			'title' 		 	 => $this->meetingName,
 			'attendee_password'  => $this->attendee_password,
 			'moderator_password' => $this->moderator_password,
@@ -87,6 +104,11 @@ class BigBlueButtonController extends Controller
 		$param['isRecordingTrue']		= $this->isRecordingTrue;
 
 		$response = BigBlueButtonClass::createMeeting($param);
+		return response()->json([
+			'success' => true,
+			'data' 	  => $tag->toArray()
+		]);
+
 		if ($response->getReturnCode() == 'SUCCESS') {
 			return redirect('/meeting/list')->with('status', "Meeting Created Successfully");
 
