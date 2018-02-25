@@ -36,4 +36,37 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+
+    public function login(Request $request)
+    {
+        $this->validate(request(), [
+            'username' => 'required|min:3|max:255',
+            'password' => 'required',
+        ]);
+
+        $credentials = request()->only('username', 'password');
+
+        if (Auth::attempt($credentials, request()->has('remember') ) ) {
+            $user = Auth::user();
+            // Allow only if user is root or enabled.
+            if ($user->enabled) {
+                $user->generateToken();
+            }
+        }
+
+    }
+
+
+    public function logout(Request $request) {
+        $user = Auth::user();
+        if ($user) {
+            $user->api_token = null;
+            $user->save();
+        }
+
+        Auth::logout();
+
+        return redirect(route('login') );
+    }
 }
