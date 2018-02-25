@@ -48,18 +48,16 @@ class AuthController extends Controller
 			'user_id' => $user->id,
 			'token'   => $verification_code
 		]);
-        $subject = "Please verify your email address.";
-
         Mail::send('email.verify', ['name' => $name, 'verification_code' => $verification_code],
-            function($mail) use ($email, $name, $subject){
+            function($mail) use ($email, $name){
                 $mail->from(getenv('FROM_EMAIL_ADDRESS'), "From User/Company Name Goes Here");
                 $mail->to($email, $name);
-                $mail->subject($subject);
+                $mail->subject("Please verify your email address.");
         });
 
         return response()->json([
-			'success'=> true,
-			'message'=> 'Thanks for signing up! Please check your email to complete your registration.'
+			'success' => true,
+			'message' => 'Thanks for signing up! Please check your email to complete your registration.'
 		]);
     }
 
