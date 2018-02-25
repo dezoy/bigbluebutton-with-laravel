@@ -60,8 +60,8 @@ class BigBlueButtonController extends Controller
         // }
         // $user = Auth::user();
 
-		if (count($request->json()->all())) {
-		     $attr = $request->json()->all();
+		if (count(request()->json()->all())) {
+		     $attr = request()->json()->all();
 		}
 
 		print_r($attr);
