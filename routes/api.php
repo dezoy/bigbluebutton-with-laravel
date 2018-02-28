@@ -12,14 +12,21 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::post('register', 'AuthController@register');
-Route::post('login',    'AuthController@login');
-Route::post('recover',  'AuthController@recover');
-Route::get('v1', function(){
-    return response()->json(['foo'=>'bar']);
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router) {
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
 });
-Route::get('refresh', 'AuthController@refresh');
+// Route::post('register', 'AuthController@register');
+// Route::post('login',    'AuthController@login');
+// Route::post('recover',  'AuthController@recover');
+// Route::get('v1', function(){
+//     return response()->json(['foo'=>'bar']);
+// });
+// Route::get('refresh', 'AuthController@refresh');
 
 Route::group(['middleware' => ['jwt.auth']], function() {
     Route::get('logout', 'AuthController@logout');
