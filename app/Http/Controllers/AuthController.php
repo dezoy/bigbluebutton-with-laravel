@@ -116,10 +116,18 @@ class AuthController extends Controller
 
         $credentials['is_verified'] = 1;
         if (! $token = auth()->attempt($credentials)) {
-                    return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        return $this->respondWithToken($token);
+        
+        return response()->json([
+        	'success' => true,
+            'message' => 'success login',
+        	'data'	  => [
+                'access_token' => $token,
+                'token_type'   => 'bearer',
+                'expires_in'   => auth()->factory()->getTTL() * 60
+            ]
+        ]);
         // try {
         //     // attempt to verify the credentials and create a token for the user
         //     if ( ! $token = JWTAuth::attempt($credentials) ){
