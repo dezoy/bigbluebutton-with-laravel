@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use Session;
+use Validator;
+
 use Illuminate\Support\Facades\Crypt;
 use App\Utils\BigBlueButtonClass;
 use App\Meeting;
