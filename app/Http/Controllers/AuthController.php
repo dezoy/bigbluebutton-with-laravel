@@ -118,14 +118,14 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        
+
         return response()->json([
         	'success' => true,
             'message' => 'success login',
         	'data'	  => [
                 'access_token' => $token,
                 'token_type'   => 'bearer',
-                'expires_in'   => auth()->factory()->getTTL() * 60
+                'expires_in'   => auth()->getTTL() * 60
             ]
         ]);
         // try {
