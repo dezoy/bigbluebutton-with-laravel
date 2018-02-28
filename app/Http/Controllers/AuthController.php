@@ -115,39 +115,27 @@ class AuthController extends Controller
         }
 
         $credentials['is_verified'] = 1;
-        if ( ! $token = auth()->attempt($credentials) ) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+
+        try {
+            // attempt to verify the credentials and create a token for the user
+            if ( ! $token = JWTAuth::attempt($credentials) ){
+                return response()->json([
+					'success' => false,
+					'error'   => 'We cant find an account with this credentials.'
+				], 401);
+            }
+        } catch (JWTException $e) {
+            // something went wrong whilst attempting to encode the token
+            return response()->json([
+				'success' => false,
+				'error'   => 'Failed to login, please try again.'
+			], 500);
         }
 
         return response()->json([
-        	'success' => true,
-            'message' => 'success login',
-        	'data'	  => [
-                'access_token' => $token,
-                // 'token_type'   => 'bearer',
-                // 'expires_in'   => auth()->getTTL() * 60
-            ]
-        ]);
-        // try {
-        //     // attempt to verify the credentials and create a token for the user
-        //     if ( ! $token = JWTAuth::attempt($credentials) ){
-        //         return response()->json([
-		// 			'success' => false,
-		// 			'error'   => 'We cant find an account with this credentials.'
-		// 		], 401);
-        //     }
-        // } catch (JWTException $e) {
-        //     // something went wrong whilst attempting to encode the token
-        //     return response()->json([
-		// 		'success' => false,
-		// 		'error'   => 'Failed to login, please try again.'
-		// 	], 500);
-        // }
-        //
-        // return response()->json([
-		// 	'success' => true,
-		// 	'data'	  => ['token' => $token]
-		// ]);
+			'success' => true,
+			'data'	  => ['token' => $token]
+		]);
     }
 
 
