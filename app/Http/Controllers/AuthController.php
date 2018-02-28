@@ -121,7 +121,7 @@ class AuthController extends Controller
             if ( ! $token = JWTAuth::attempt($credentials) ){
                 return response()->json([
 					'success' => false,
-					'error'   => 'We cant find an account with this credentials. Please make sure you entered the right information and you have verified your email address.'
+					'error'   => 'We cant find an account with this credentials.'
 				], 401);
             }
         } catch (JWTException $e) {
@@ -198,5 +198,17 @@ class AuthController extends Controller
 			]
         ]);
     }
+
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth()->refresh());
+    }
+
 
 }
