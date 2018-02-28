@@ -90,10 +90,10 @@ class APIController extends Controller
 		$this->attendee_password  = sha1(rand() . time() . env('APP_KEY'));
 		$this->moderator_password = sha1(rand() . time() . env('APP_KEY'));
 
-		if ($attr['title']){
+		if (isset($attr['title']) ){
 			$this->meetingName 	= $attr['title'];
 		}
-		if ($attr['duration']){
+		if (isset($attr['duration']) ){
 			$this->duration  	= $attr['duration'];
 		}
 		$param['meetingID'] 			= $this->meetingID;
