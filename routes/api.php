@@ -14,13 +14,21 @@ use Illuminate\Http\Request;
 */
 
 Route::post('register', 'AuthController@register');
-Route::post('login', 'AuthController@login');
-Route::post('recover', 'AuthController@recover');
+Route::post('login',    'AuthController@login');
+Route::post('recover',  'AuthController@recover');
+Route::get('v1', function(){
+    return response()->json(['foo'=>'bar']);
+});
+
 Route::group(['middleware' => ['jwt.auth']], function() {
     Route::get('logout', 'AuthController@logout');
+    Route::post('v1', 'APIController@distributor');
+
     Route::get('test', function(){
         return response()->json(['foo'=>'bar']);
     });
+
+    Route::post('refresh', 'AuthController@refresh');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
