@@ -115,7 +115,7 @@ class AuthController extends Controller
         }
 
         $credentials['is_verified'] = 1;
-        if (! $token = auth()->attempt($credentials)) {
+        if ( ! $token = JWTAuth::attempt($credentials) ) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
