@@ -19,7 +19,7 @@ Route::post('recover',  'AuthController@recover');
 Route::get('v1', function(){
     return response()->json(['foo'=>'bar']);
 });
-Route::post('refresh', 'AuthController@refresh');
+Route::get('refresh', 'AuthController@refresh');
 
 Route::group(['middleware' => ['jwt.auth']], function() {
     Route::get('logout', 'AuthController@logout');
