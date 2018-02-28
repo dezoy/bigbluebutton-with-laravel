@@ -105,7 +105,7 @@ class APIController extends Controller
 		$param['isRecordingTrue']		= $this->isRecordingTrue;
 
 		$response = BigBlueButtonClass::createMeeting($param);
-
+		print_r($response->getMeetingId());
 		if ($response->getReturnCode() == 'SUCCESS') {
 			Meeting::create([
 				'meeting_id' 		 => $this->meetingID,
