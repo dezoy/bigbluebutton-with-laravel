@@ -124,8 +124,8 @@ class AuthController extends Controller
             'message' => 'success login',
         	'data'	  => [
                 'access_token' => $token,
-                'token_type'   => 'bearer',
-                'expires_in'   => auth()->getTTL() * 60
+                // 'token_type'   => 'bearer',
+                // 'expires_in'   => auth()->getTTL() * 60
             ]
         ]);
         // try {
