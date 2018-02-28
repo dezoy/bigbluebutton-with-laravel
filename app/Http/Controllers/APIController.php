@@ -106,9 +106,6 @@ class APIController extends Controller
 
 		$response = BigBlueButtonClass::createMeeting($param);
 
-		$meeting->create_time = $response->createTime;
-
-
 		if ($response->getReturnCode() == 'SUCCESS') {
 			Meeting::create([
 				'meeting_id' 		 => $this->meetingID,
@@ -116,7 +113,7 @@ class APIController extends Controller
 				'title' 		 	 => $this->meetingName,
 				'attendee_password'  => $this->attendee_password,
 				'moderator_password' => $this->moderator_password,
-				'create_time' 		 => $response->createTime,
+				'create_time' 		 => $response->getCreationTime(),
 				'duration' 			 => $this->duration,
 				'urlLogout' 		 => $this->urlLogout,
 				'isRecordingTrue' 	 => $this->isRecordingTrue,
