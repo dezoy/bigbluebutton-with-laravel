@@ -17,7 +17,7 @@ class APIController extends Controller
 	private $meetingName = "fifth  Meeting";
 	private $attendee_password = "123";
 	private $moderator_password = "321";
-	private $duration = 60;
+	private $duration = 0;
 	private $urlLogout = "http://localhost/bigbluebutton/meeting/list";
 	private $isRecordingTrue = 1;
 
@@ -113,7 +113,7 @@ class APIController extends Controller
 		$param['isRecordingTrue']		= $this->isRecordingTrue;
 
 		$response = BigBlueButtonClass::createMeeting($param);
-
+		print_r($response);
 		if ($response->getReturnCode() == 'SUCCESS') {
 			$meeting = Meeting::create([
 				'meeting_id' 		 => $this->meetingID,
