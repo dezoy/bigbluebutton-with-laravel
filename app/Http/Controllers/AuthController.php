@@ -113,38 +113,47 @@ class AuthController extends Controller
     public function login()
     {
         $credentials = request()->only('email', 'password');
-        $validator = Validator::make($credentials, [
+        $valid = Validator::make($credentials, [
             'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        if ($validator->fails() ){
+        if ($valid->fails() ){
             return response()->json([
 				'success' => false,
-				'error'   => $validator->messages()
+                'message' => 'error',
+                'data' => $valid->messages()
 			]);
         }
 
         $credentials['is_verified'] = 1;
-
-        try {
-            // attempt to verify the credentials and create a token for the user
-            if ( ! $token = JWTAuth::attempt($credentials) ){
-                return response()->json([
-					'success' => false,
-					'error'   => 'We cant find an account with this credentials.'
-				], 401);
-            }
-        } catch (JWTException $e) {
-            // something went wrong whilst attempting to encode the token
+        if ( ! $token = auth()->attempt($credentials) ) {
             return response()->json([
-				'success' => false,
-				'error'   => 'Failed to login, please try again.'
-			], 500);
+                'success' => false,
+                'message' => 'unauthorized',
+                'data' => ''
+            ], 401);
         }
+        // try {
+        //     // attempt to verify the credentials and create a token for the user
+        //     if ( ! $token = JWTAuth::attempt($credentials) ){
+        //         return response()->json([
+		// 			'success' => false,
+        //             'message' => 'Unauthorized',
+		// 			'error'   => 'We cant find an account with this credentials.'
+		// 		], 401);
+        //     }
+        // } catch (JWTException $e) {
+        //     // something went wrong whilst attempting to encode the token
+        //     return response()->json([
+		// 		'success' => false,
+		// 		'error'   => 'Failed to login, please try again.'
+		// 	], 500);
+        // }
 
         return response()->json([
 			'success' => true,
+            'message' => 'success login',
 			'data'	  => ['token' => $token]
 		]);
     }
@@ -156,21 +165,41 @@ class AuthController extends Controller
      * They have to relogin to get a new token
      */
     public function logout() {
-        $this->validate(request(), ['token' => 'required']);
+        $attr = request()->only('token');
+        $valid = Validator::make($attr, [
+            'token' => 'required',
+        ]);
 
-        try {
-            JWTAuth::invalidate(request()->input('token') );
-            return response()->json([
-				'success' => true,
-				'message' => "You have successfully logged out."
-			]);
-        } catch (JWTException $e){
-            // something went wrong whilst attempting to encode the token
+        if ($valid->fails() ){
             return response()->json([
 				'success' => false,
-				'error'   => 'Failed to logout, please try again.'
-			], 500);
+                'message' => 'error',
+                'data'    => $valid->messages()
+			]);
         }
+        auth()->logout();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully logged out',
+            'data'    => ''
+        ]);
+
+        // try {
+        //     JWTAuth::invalidate(request()->input('token') );
+        //     return response()->json([
+		// 		'success' => true,
+		// 		'message' => "You have successfully logged out."
+        //         'data'	  => ['token' => $token]
+		// 	]);
+        // } catch (JWTException $e){
+        //     // something went wrong whilst attempting to encode the token
+        //     return response()->json([
+		// 		'success' => false,
+		// 		'error'   => 'Failed to logout, please try again.'
+		// 	], 500);
+        // }
+
     }
 
 
@@ -181,17 +210,30 @@ class AuthController extends Controller
      */
     public function recover()
     {
-        $user = User::where('email', request()->email)->first();
-        if ( ! $user){
-            $error_message = "Your email address was not found.";
+        $attr = request()->only('email');
+        $valid = Validator::make($attr, [
+            'email' => 'required|email',
+        ]);
+
+        if ($valid->fails() ){
             return response()->json([
 				'success' => false,
-				'error'   => ['email'=> $error_message]
+                'message' => 'error',
+                'data'    => $valid->messages()
+			]);
+        }
+
+        $user = User::where('email', $attr['email'])->first();
+        if ( ! $user){
+            return response()->json([
+				'success' => false,
+                'message' => 'error',
+				'data'    => 'Your email address was not found.'
 			], 401);
         }
 
         try {
-            Password::sendResetLink(request()->only('email'), function (Message $message) {
+            Password::sendResetLink($attr['email'], function (Message $message) {
                 $message->subject('Your Password Reset Link');
             });
         } catch (\Exception $e) {
@@ -204,9 +246,8 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-			'data'    => [
-				'message'=> 'A reset email has been sent! Please check your email.'
-			]
+            'message' => 'A reset email has been sent! Please check your email.',
+			'data'    => ''
         ]);
     }
 

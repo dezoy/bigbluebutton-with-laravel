@@ -60,10 +60,13 @@ class BigBlueButtonClass
 	 public static function joinMeeting($param = [])
 	 {
 		$meetingID 	= $param['meetingID'];
-		$name		= $param['name'];
+		$name		= $param['fullname'];
 		$password	= $param['password'];
 		$bbb = new BigBlueButton();
 		$joinMeetingParams = new JoinMeetingParameters($meetingID, $name, $password); // $moderator_password for moderator
+		if ( ! empty($param['meetingID']) ){
+			$joinMeetingParams->setUsername();
+		}
 		$joinMeetingParams->setRedirect(true);
 		$url = $bbb->getJoinMeetingURL($joinMeetingParams);
 

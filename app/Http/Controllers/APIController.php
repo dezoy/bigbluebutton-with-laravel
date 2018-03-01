@@ -72,6 +72,14 @@ class APIController extends Controller
 
 	public function createMeeting()
 	{
+		if ( ! $user = auth()->user() ){
+			return response()->json([
+				'success' => false,
+				'message' => 'Unauthorized',
+				'data' 	  => ''
+			]);
+		}
+
 		$attr = $this->params;
 		$valid = Validator::make($attr, [
             'title'      => 'max:255',
@@ -105,7 +113,7 @@ class APIController extends Controller
 		$param['isRecordingTrue']		= $this->isRecordingTrue;
 
 		$response = BigBlueButtonClass::createMeeting($param);
-		print_r($response);
+
 		if ($response->getReturnCode() == 'SUCCESS') {
 			$meeting = Meeting::create([
 				'meeting_id' 		 => $this->meetingID,
@@ -129,18 +137,36 @@ class APIController extends Controller
 	}
 
 
-	public function joinMeeting($name, $password, $meetingID)
+	public function joinMeeting()
 	{
-		$param['meetingID'] = $meetingID;
-		$param['name']		= $name;
-		$param['password']	= $password;
+		$attr = request()->only(['meeting_id', 'user_id', 'fullname']);
+		$valid = Validator::make($attr, [
+            'meeting_id' => 'required',
+			'user_id' 	 => 'integer',
+            'fullname' 	 => 'string'
+        ]);
+        if ($valid->fails() ) {
+            return response()->json([
+				'success' => true,
+				'message' => 'error',
+				'data' 	  => $valid->errors()->all()
+			]);
+        }
+		$data = Meeting::where('meeting_id', $meetingID)->first();
+		Subscriber::create([
 
-		$url = BigBlueButtonClass::joinMeeting($param);
+		]);
+		$param = [
+			'meetingID' => $meetingID,
+			'fullname'	=> $fullname,
+			'password'	=> $password,
+		];
+		return response()->json([
+			'success' => true,
+			'message' => 'meeting created',
+			'data' 	  => $meeting->toArray()
+		]);
 
-		return redirect($url);
-
-		header("Location:".$url);
-		// echo $url;
 	}
 
 
