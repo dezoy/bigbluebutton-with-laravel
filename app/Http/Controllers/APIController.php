@@ -40,8 +40,7 @@ class APIController extends Controller
         if ($valid->fails() ) {
             return response()->json([
 				'success' => false,
-				'message' => 'error',
-				'data'    => $valid->errors()->all()
+				'message' => $valid->errors()->all()
 			]);
         }
 
@@ -49,8 +48,12 @@ class APIController extends Controller
 
 		$func_name = $params['action'].'Meeting';
 		if (method_exists($this, $func_name) ){
-			print_r($func_name);
 			$this->$func_name();
+		} else {
+			return response()->json([
+				'success' => false,
+				'message' => 'Action not exists'
+			]);
 		}
 
 		// switch ($params['action']){
@@ -83,9 +86,8 @@ class APIController extends Controller
         ]);
         if ($valid->fails() ) {
             return response()->json([
-				'success' => true,
-				'message' => 'error',
-				'data' 	  => $valid->errors()->all()
+				'success' => false,
+				'message' => $valid->errors()->all()
 			]);
         }
 
@@ -103,7 +105,6 @@ class APIController extends Controller
 			'duration' 			 => $this->duration,
 			'urlLogout' 		 => $this->urlLogout,
 			'isRecordingTrue' 	 => $this->isRecordingTrue,
-			'recordId'			 => ''
 		]);
 
 		return response()->json([
@@ -124,13 +125,12 @@ class APIController extends Controller
 
         if ($valid->fails() ) {
             return response()->json([
-				'success' => true,
-				'message' => 'error',
-				'data' 	  => $valid->errors()->all()
+				'success' => false,
+				'message' => $valid->errors()->all()
 			]);
         }
 
-		$meeting = Meeting::where('meetingId', $params['meeting_id'])->ВУДУЕУ();
+		$meeting = Meeting::where('meetingId', $params['meeting_id'])->delete();
 		return response()->json([
 			'success' => true,
 			'message' => 'joined',
@@ -151,9 +151,8 @@ class APIController extends Controller
 
         if ($valid->fails() ){
             return response()->json([
-				'success' => true,
-				'message' => 'error',
-				'data' 	  => $valid->errors()->all()
+				'success' => false,
+				'message' => $valid->errors()->all()
 			]);
         }
 
@@ -185,9 +184,8 @@ class APIController extends Controller
 
         if ($valid->fails() ){
             return response()->json([
-				'success' => true,
-				'message' => 'error',
-				'data' 	  => $valid->errors()->all()
+				'success' => false,
+				'message' => $valid->errors()->all()
 			]);
         }
 
@@ -203,88 +201,5 @@ class APIController extends Controller
 	}
 
 
-	public function closeMeeting($password, $meetingID)
-	{
-		$param['meetingID'] 		 = $meetingID;
-		$param['moderator_password'] = $password;
-		$response = BigBlueButtonClass::closeMeeting($param);
 
-	 	return redirect('/meeting/list')->with('status', $response->getMessage());
-
-		echo $response->getReturnCode().'<br>';
-		echo $response->getMessageKey().'<br>';
-		echo $response->getMessage().'<br>';
-		print "<pre>";
-		print_r($response);
-	}
-
-
-	public function getMeetingInfo($password, $meetingID)
-	{
-		$param['meetingID'] 		 = $meetingID;
-		$param['moderator_password'] = $password;
-		$response = BigBlueButtonClass::getMeetingInfo($param);
-		//echo $response->getReturnCode().'<br>';
-		//echo $response->getMessageKey().'<br>';
-		//echo $response->getMessage().'<br>';
-		echo "Meeting Information Response from BBB server";
-		print "<pre>";
-		print_r($response);
-
-		if ($response->getReturnCode() == 'FAILED') {
-			// meeting not found or already closed
-
-		} else {
-			print "<pre>";
-			//print_r($response);
-			// process $response->getRawXml();
-		}
-	}
-
-
-	public function getRecordings(){
-		$param['meetingID'] = $this->meetingID;
-		$response = BigBlueButtonClass::getRecordings($param);
-		//echo $response->getReturnCode().'<br>';
-		//echo $response->getMessageKey().'<br>';
-		//echo $response->getMessage().'<br>';
-	 	if ($response->getReturnCode() == 'SUCCESS') {
-			return view('bbb.list_recordings', ["response" => $response]);
-
-		 } else {
-			echo "Recordings not found";
-
-		}
-	}
-
-
-	public function deleteRecordings($recordId)
-	{
-		$param['recordingID'] = $recordId;
-		$response = BigBlueButtonClass::deleteRecordings($param);
-		// echo $response->getReturnCode().'<br>';
-		// echo $response->getMessageKey().'<br>';
-		// echo $response->getMessage().'<br>';
-		// print "<pre>";
-		// print_r($response);
-		// exit;
-		if ($response->getReturnCode() == 'SUCCESS') {
-			// return redirect('/meeting/recordings');
-			return redirect('/meeting/recordings')->with('status', $response->getMessage() );
-
-			// recording deleted
-		} else {
-			// something wrong
-		}
-	}
-
-
-	public function isMeetingRunning(){
-	 	$param['meetingID'] = $this->meetingID;
-		$response = BigBlueButtonClass::isMeetingRunning($param);
-		echo $response->getReturnCode().'<br>';
-		echo $response->isRunning().'<br>';
-		print "<pre>";
-		print_r($response);
-	}
 }
