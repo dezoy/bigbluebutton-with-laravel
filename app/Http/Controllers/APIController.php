@@ -49,6 +49,7 @@ class APIController extends Controller
 
 		if (function_exists($params['action'].'Meeting') ){
 			$func_name = $params['action'].'Meeting';
+			print_r($func_name);
 			$this->$func_name();
 		}
 
