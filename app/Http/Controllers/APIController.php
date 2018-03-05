@@ -14,7 +14,7 @@ use App\Meeting;
 class APIController extends Controller
 {
 	private $meetingID = 208;
-	private $meetingName = "fifth  Meeting";
+	private $meetingName = "";
 	private $attendee_password = "123";
 	private $moderator_password = "321";
 	private $duration = 0;
@@ -92,6 +92,7 @@ class APIController extends Controller
         }
 
 		$nextID 		 	= Meeting::max("id") + 1;
+		$this->meetingName 	= $params['title'];
 		$this->meetingID 	= BigBlueButtonClass::Uuid($nextID);
 		$this->attendee_password  = sha1(rand() . time() . env('APP_KEY'));
 		$this->moderator_password = sha1(rand() . time() . env('APP_KEY'));
