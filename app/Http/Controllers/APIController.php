@@ -48,7 +48,7 @@ class APIController extends Controller
 
 		$func_name = $params['action'].'Meeting';
 		if (method_exists($this, $func_name) ){
-			$this->$func_name();
+			return $this->$func_name();
 		} else {
 			return response()->json([
 				'success' => false,
