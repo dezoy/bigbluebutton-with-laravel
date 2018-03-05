@@ -48,7 +48,8 @@ class APIController extends Controller
 		$this->params = $params['params'];
 
 		if (function_exists($params['action'].'Meeting') ){
-			$this->{$params['action'].'Meeting'};
+			$func_name = $params['action'].'Meeting';
+			$this->$func_name();
 		}
 
 		// switch ($params['action']){
