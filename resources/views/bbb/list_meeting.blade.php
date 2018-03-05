@@ -1,8 +1,8 @@
 @extends('bbb.layouts_default')
-@section('content')    
+@section('content')
 
   <h1>Meetings List</h1>
- 
+
 	<table class="table table-bordered">
 		<thead>
 		  <tr>
@@ -18,26 +18,24 @@
 		  </tr>
 		</thead>
 		<tbody>
-	  <?php
+        @php
 			$meetingsList = DB::table("meetings")->get();
 			$i=1;
-			foreach($meetingsList as $meeting){
-		?>
+        @endphp
+		@foreach($meetingsList as $key => $meeting){
 		  <tr>
-			<td><a href="{{ url('/meeting/info/') }}/<?php echo $meeting->moderator_password;?>/<?php echo $meeting->meetingID;?>"  target="_blank" ><?php echo $meeting -> meetingID;?></a></td>
-			<td><?php echo $meeting -> meetingName;?></td>
-			<td><?php echo $meeting -> moderator_password;?></td>
-			<td><?php echo $meeting -> attendee_password;?></td>
-			<td><?php echo $meeting -> duration;?> Min</td>
-			<td><a href="{{ url('/meeting/info/') }}/<?php echo $meeting->moderator_password;?>/<?php echo $meeting->meetingID;?>"  target="_blank" >info</a></td>			
-			<td><a href="{{ url('/meeting/join/') }}/Moderator <?php echo $i;?>/<?php echo $meeting->moderator_password;?>/<?php echo $meeting->meetingID;?>"  target="_blank" >join</a></td>
-			<td><a href="{{ url('/meeting/join/') }}/Demo <?php echo $i;?>/<?php echo $meeting->attendee_password;?>/<?php echo $meeting->meetingID;?>" target="_blank" >join</a></td>
-			  <td><a href="{{ url('/meeting/close/') }}/<?php echo $meeting->moderator_password;?>/<?php echo $meeting->meetingID;?>"  target="_blank" >close</a></td>
+			<td><a href="{{ url('/meeting/info/') }}/{{ $meeting->moderator_password;?>/{{ $meeting->meetingID;?>"  target="_blank" >{{ $meeting -> meetingID }}</a></td>
+			<td>{{ $meeting->meetingName }}</td>
+			<td>{{ $meeting->moderator_password }}</td>
+			<td>{{ $meeting->attendee_password }}</td>
+			<td>{{ $meeting->duration }} Min</td>
+			<td><a href="{{ url('/meeting/info/') }}/{{ $meeting->moderator_password;?>/{{ $meeting->meetingID }}"  target="_blank" >info</a></td>
+			<td><a href="{{ url('/meeting/join/') }}/Moderator {{ $i }}/{{ $meeting->moderator_password;?>/{{ $meeting->meetingID }}"  target="_blank" >join</a></td>
+			<td><a href="{{ url('/meeting/join/') }}/Demo {{ $i }}/{{ $meeting->attendee_password }}/{{ $meeting->meetingID }}" target="_blank" >join</a></td>
+			  <td><a href="{{ url('/meeting/close/') }}/{{ $meeting->moderator_password }}/{{ $meeting->meetingID }}"  target="_blank" >close</a></td>
 		  </tr>
-		  <?php
 			$i++;
-			} ?>
-		 
+        @endforeach
 		</tbody>
-	  </table>     
-@endsection	  
+	  </table>
+@endsection

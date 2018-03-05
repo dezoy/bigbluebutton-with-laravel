@@ -32,8 +32,8 @@ class APIController extends Controller
 	 */
 	public function distributor()
 	{
-		$attr  = request()->json()->all();
-		$valid = Validator::make($attr, [
+		$params  = request()->json()->all();
+		$valid = Validator::make($params, [
             'action' => 'required|max:255',
             'params' => 'required|array'
         ]);
@@ -45,44 +45,38 @@ class APIController extends Controller
 			]);
         }
 
-		$this->params = $attr['params'];
+		$this->params = $params['params'];
 
-		if ($attr['action'] == 'create'){
-			$this->createMeeting();
-		}
-	}
-
-
-	public function getMeetings(){
-
-		$response = BigBlueButtonClass::getMeetings();
-		echo $response->getMessageKey().'<br>';
-		echo $response->getMessage();
-		print "<pre>";
-		// print_r($response);
-
-		if ($response->getReturnCode() == 'SUCCESS') {
-			foreach ($response->getRawXml()->meetings->meeting as $meeting) {
-				print_r($meeting);
-				// process all meeting
-			}
+		if (function_exists($params['action'].'Meeting') ){
+			$this->{$params['action'].'Meeting'};
 		}
 
+		// switch ($params['action']){
+		// 	case 'create':
+		// 		$this->createMeeting();
+		//
+		// 		break;
+		// 	case 'delete':
+		// 		$this->deleteMeeting();
+		//
+		// 		break;
+		// 	case 'join':
+		// 		$this->joinMeeting();
+		//
+		// 		break;
+		// 	case 'unjoin':
+		// 		$this->unjoinMeeting();
+		//
+		// 		break;
+		// }
 	}
+
 
 	public function createMeeting()
 	{
-		if ( ! $user = auth()->user() ){
-			return response()->json([
-				'success' => false,
-				'message' => 'Unauthorized',
-				'data' 	  => ''
-			]);
-		}
-
-		$attr = $this->params;
-		$valid = Validator::make($attr, [
-            'title'      => 'max:255',
+		$params = $this->params;
+		$valid = Validator::make($params, [
+            'title'   => 'max:255',
             'user_id' => 'integer'
         ]);
         if ($valid->fails() ) {
@@ -98,53 +92,34 @@ class APIController extends Controller
 		$this->attendee_password  = sha1(rand() . time() . env('APP_KEY'));
 		$this->moderator_password = sha1(rand() . time() . env('APP_KEY'));
 
-		if (isset($attr['title']) ){
-			$this->meetingName 	= $attr['title'];
-		}
-		if (isset($attr['duration']) ){
-			$this->duration  	= $attr['duration'];
-		}
-		$param['meetingID'] 			= $this->meetingID;
-		$param['meetingName']			= $this->meetingName;
-		$param['attendee_password']		= $this->attendee_password;
-		$param['moderator_password']	= $this->moderator_password;
-		$param['duration'] 				= $this->duration;
-		$param['urlLogout'] 			= $this->urlLogout;
-		$param['isRecordingTrue']		= $this->isRecordingTrue;
+		$meeting = Meeting::create([
+			'meetingId' 		 => $this->meetingID,
+			'user_id' 		     => auth()->user()->id,
+			'title' 		 	 => $this->meetingName,
+			'attendee_password'  => $this->attendee_password,
+			'moderator_password' => $this->moderator_password,
+			'duration' 			 => $this->duration,
+			'urlLogout' 		 => $this->urlLogout,
+			'isRecordingTrue' 	 => $this->isRecordingTrue,
+			'recordId'			 => ''
+		]);
 
-		$response = BigBlueButtonClass::createMeeting($param);
-		print_r($response);
-		if ($response->getReturnCode() == 'SUCCESS') {
-			$meeting = Meeting::create([
-				'meeting_id' 		 => $this->meetingID,
-				'user_id' 		     => auth()->user()->id,
-				'title' 		 	 => $this->meetingName,
-				'attendee_password'  => $this->attendee_password,
-				'moderator_password' => $this->moderator_password,
-				'create_time' 		 => $response->getCreationTime(),
-				'duration' 			 => $this->duration,
-				'urlLogout' 		 => $this->urlLogout,
-				'isRecordingTrue' 	 => $this->isRecordingTrue,
-				'record_id'			 => ''
-			]);
+		return response()->json([
+			'success' => true,
+			'message' => 'meeting created',
+			'data' 	  => $meeting->toArray()
+		]);
 
-			return response()->json([
-				'success' => true,
-				'message' => 'meeting created',
-				'data' 	  => $meeting->toArray()
-			]);
-		}
 	}
 
 
-	public function joinMeeting()
+	public function deleteMeeting()
 	{
-		$attr = request()->only(['meeting_id', 'user_id', 'fullname']);
-		$valid = Validator::make($attr, [
-            'meeting_id' => 'required',
-			'user_id' 	 => 'integer',
-            'fullname' 	 => 'string'
+		$params = $this->params;
+		$valid = Validator::make($params, [
+            'meeting_id' => 'required'
         ]);
+
         if ($valid->fails() ) {
             return response()->json([
 				'success' => true,
@@ -152,19 +127,75 @@ class APIController extends Controller
 				'data' 	  => $valid->errors()->all()
 			]);
         }
-		$data = Meeting::where('meeting_id', $meetingID)->first();
-		Subscriber::create([
 
-		]);
-		$param = [
-			'meetingID' => $meetingID,
-			'fullname'	=> $fullname,
-			'password'	=> $password,
-		];
+		$meeting = Meeting::where('meetingId', $params['meeting_id'])->ВУДУЕУ();
 		return response()->json([
 			'success' => true,
-			'message' => 'meeting created',
-			'data' 	  => $meeting->toArray()
+			'message' => 'joined',
+			'data' 	  => []
+		]);
+	}
+
+
+	public function joinMeeting()
+	{
+		$params = $this->params;
+		$valid = Validator::make($params, [
+            'meeting_id' => 'required',
+			'user_id' 	 => 'integer',
+            'fullname' 	 => 'string',
+            'moderator'  => 'integer'
+        ]);
+
+        if ($valid->fails() ){
+            return response()->json([
+				'success' => true,
+				'message' => 'error',
+				'data' 	  => $valid->errors()->all()
+			]);
+        }
+
+		$meeting = Meeting::where('meetingId', $params['meeting_id'])->first();
+
+		$subscriber = Subscriber::create([
+			'meeting_id'  	=> $meeting->id,
+			'hash'  		=> hash('sha512', $meeting->meetingId . env('APP_KEY') ),
+			'subscriber_id' => $params['user_id'],
+			'fullname'    	=> $params['fullname'],
+			'isModerator' 	=> $params['moderator']
+		]);
+
+		return response()->json([
+			'success' => true,
+			'message' => 'joined',
+			'data' 	  => ['access_url' => route('meeting.join', $subscriber->hash)]
+		]);
+	}
+
+
+	public function unjoinMeeting()
+	{
+		$params = $this->params;
+		$valid = Validator::make($params, [
+            'meeting_id' => 'required',
+			'user_id' 	 => 'required|integer'
+        ]);
+
+        if ($valid->fails() ){
+            return response()->json([
+				'success' => true,
+				'message' => 'error',
+				'data' 	  => $valid->errors()->all()
+			]);
+        }
+
+		$meeting = Meeting::where('meetingId', $params['meeting_id'])->first();
+
+		$subscriber = Subscriber::where('meeting_id', $meeting->id)->where('user_id', $params['user_id'])->delete();
+		return response()->json([
+			'success' => true,
+			'message' => 'joined',
+			'data' 	  => []
 		]);
 
 	}

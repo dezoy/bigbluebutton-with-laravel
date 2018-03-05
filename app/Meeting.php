@@ -22,6 +22,7 @@ class Meeting extends Model
 		'title',
 		'attendee_password',
 		'moderator_password',
+		'create_time',
 		'duration',
 		'urlLogout',
 		'isRecordingTrue',

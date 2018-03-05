@@ -16,14 +16,15 @@ class CreateMeetingsTable extends Migration
         Schema::create('meetings', function (Blueprint $table) {
             $table->increments('id');
 			$table->integer('user_id');
-			$table->string('meeting_id');
+			$table->string('meetingId');
 			$table->string('title');
 			$table->string('attendee_password');
 			$table->string('moderator_password');
-			$table->string('duration');
+			$table->integer('createTime')->default(0);
+			$table->integer('duration');
 			$table->string('urlLogout');
-			$table->string('isRecordingTrue');
-			$table->string('record_id');
+			$table->tinyInteger('isRecordingTrue');
+			$table->string('recordId');
 
             $table->timestamps();
             $table->softDeletes();

@@ -18,7 +18,10 @@ class Subscriber extends Model
 
 	protected $fillable = [
 		'user_id',
-		'meeting_id'
+		'meeting_id',
+		'hash',
+		'isModerator',
+		'fullname'
 	];
 
 	/**
