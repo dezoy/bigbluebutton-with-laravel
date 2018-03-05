@@ -18,15 +18,15 @@ class Meeting extends Model
 
 	protected $fillable = [
 		'user_id',
-		'meeting_id',
+		'meetingId',
 		'title',
 		'attendee_password',
 		'moderator_password',
-		'create_time',
+		'createTime',
 		'duration',
 		'urlLogout',
 		'isRecordingTrue',
-		'record_id',
+		'recordId',
 	];
 
 	/**
