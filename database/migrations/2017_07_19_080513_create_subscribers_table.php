@@ -15,11 +15,11 @@ class CreateSubscribersTable extends Migration
         if( ! Schema::hasTable('subscribers') ) {
             Schema::create('subscribers', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('hash');
-                $table->integer('meeting_id');
-                $table->integer('user_id');
+                $table->string('hash')->default('');
+                $table->integer('meeting_id')->default(0);
+                $table->integer('user_id')->default(0);
                 $table->tinyInteger('isModerator')->default(0);
-                $table->integer('fullname')->nullable();
+                $table->string('fullname')->default('');
 
 				$table->timestamps();
 	            $table->softDeletes();
