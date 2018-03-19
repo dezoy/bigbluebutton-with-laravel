@@ -20,10 +20,10 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('api', ['except' => ['login']]);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('api', ['except' => ['login']]);
+    // }
 
 
 	/**
