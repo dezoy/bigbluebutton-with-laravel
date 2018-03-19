@@ -40,7 +40,7 @@ class BigBlueButtonController extends Controller
 	public function joinMeeting($userHash)
 	{
 		$query = Subscriber::where('hash', $userHash);
-		$meeting 	= $query->meeting();
+		$meeting 	= $query->meeting()->get();
 		$subscriber = $query->first();
 		print_r($meeting->toArray());
 		die();
