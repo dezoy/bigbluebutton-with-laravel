@@ -7,23 +7,84 @@ use Session;
 use Illuminate\Support\Facades\Crypt;
 use App\Utils\BigBlueButtonClass;
 use App\Meeting;
+use App\Subscriber;
 
 class BigBlueButtonController extends Controller
 {
-	private $meetingID = 208;
-	private $meetingName = "fifth  Meeting";
-	private $attendee_password = "123";
-	private $moderator_password = "321";
-	private $duration = 60;
-	private $urlLogout = "http://localhost/bigbluebutton/meeting/list";
-	private $isRecordingTrue = 1;
 
-	public function __construct(){
-		$this->meetingID = BigBlueButtonClass::Uuid($this->meetingID);
+	public function __construct()
+	{
+		//
 	}
 
 
-	public function getMeetings(){
+	public function createMeeting($meeting)
+	{
+		$response = BigBlueButtonClass::createMeeting([
+			'meetingID' 			=> $meeting->meetingID,
+			'meetingName'			=> $meeting->title,
+			'attendee_password'		=> $meeting->attendee_password,
+			'moderator_password'	=> $meeting->moderator_password,
+			'duration' 				=> $meeting->duration,
+			'urlLogout' 			=> $meeting->urlLogout,
+			'isRecordingTrue'		=> $meeting->isRecordingTrue
+		]);
+
+		$meeting->createTime = $response->getCreateTime();
+		$meeting->save();
+
+		return $meeting;
+	}
+
+
+	public function joinMeeting($userHash)
+	{
+		$subscriber = Subscriber::where('hash', $userHash)->first();
+		$meeting 	= $subscriber->meeting();
+
+		if (empty($meeting->createTime) ){
+			// Moderator has not joined yet
+			if ($subscriber->isModerator) {
+				$meeting = $this->createMeeting($meeting);
+			} else {
+				return view('bbb.meeting_didnt_degin');
+			}
+		}
+
+		$url = BigBlueButtonClass::joinMeeting([
+			'meetingID' => $meeting->meetingID,
+			'fullname'	=> $subscriber->fullname,
+			'password'	=> $meeting->moderator_password,
+			'createTime'=> $meeting->createTime
+		]);
+
+		// Maybe will be change part of url
+		// from api/ to html5client/
+
+		return redirect($url);
+
+	 	header("Location:".$url);
+	}
+
+
+	public function closeMeeting($password, $meetingID)
+	{
+		$param['meetingID'] 		 = $meetingID;
+		$param['moderator_password'] = $password;
+		$response = BigBlueButtonClass::closeMeeting($param);
+
+	 	return redirect('/meeting/list')->with('status', $response->getMessage());
+
+		echo $response->getReturnCode().'<br>';
+		echo $response->getMessageKey().'<br>';
+		echo $response->getMessage().'<br>';
+		print "<pre>";
+		print_r($response);
+	}
+
+
+	public function getMeetings()
+	{
 
 		$response = BigBlueButtonClass::getMeetings();
 		echo $response->getMessageKey().'<br>';
@@ -50,100 +111,6 @@ class BigBlueButtonController extends Controller
 	public function addMeeting()
 	{
 		return view('bbb.create_meeting');
-	}
-
-
-	public function createMeeting()
-	{
-		// if ( ! Auth::check() ) {
-        //     return response()->json(['error' => 'Unauthorized user']);
-        // }
-        // $user = Auth::user();
-
-		if (count(request()->json()->all())) {
-		     $attr = request()->json()->all();
-		}
-
-		print_r($attr);
-		die();
-
-		$attr = request()->only(['meetingName', 'attendee_password', 'moderator_password']);
-		$valid = Validator::make($attr, [
-            'title'      => 'required|max:255',
-            'student_id' => 'required|integer'
-        ]);
-        if ($valid->fails() ) {
-            return response()->json(['error' => $valid->errors()->all()]);
-        }
-
-		$this->meetingName 		  = Request::get('meetingName');
-		$this->attendee_password  = Request::get('attendee_password');
-		$this->moderator_password = Request::get('moderator_password');
-		$this->duration  = Request::get('duration');
-		$nextID 		 = Meeting::max("id")+1;
-	 	$this->meetingID = BigBlueButtonClass::Uuid($nextID);
-
-		Meeting::create([
-			'meeting_id' 		 => $this->meetingID,
-			'user_id' 		     => 0,
-			'title' 		 	 => $this->meetingName,
-			'attendee_password'  => $this->attendee_password,
-			'moderator_password' => $this->moderator_password,
-			'duration' 			 => $this->duration,
-			'urlLogout' 		 => $this->urlLogout,
-			'isRecordingTrue' 	 => $this->isRecordingTrue,
-			'record_id'			 => ''
-		]);
-
-		$param['meetingID'] 			= $this->meetingID;
-		$param['meetingName']			= $this->meetingName;
-		$param['attendee_password']		= $this->attendee_password;
-		$param['moderator_password']	= $this->moderator_password;
-		$param['duration'] 				= $this->duration;
-		$param['urlLogout'] 			= $this->urlLogout;
-		$param['isRecordingTrue']		= $this->isRecordingTrue;
-
-		$response = BigBlueButtonClass::createMeeting($param);
-		return response()->json([
-			'success' => true,
-			'data' 	  => $tag->toArray()
-		]);
-
-		if ($response->getReturnCode() == 'SUCCESS') {
-			return redirect('/meeting/list')->with('status', "Meeting Created Successfully");
-
-		} else {
-			return redirect('/meeting/add')->with('status', $response->getMessage());
-
-		}
-	}
-
-
-	public function joinMeeting($name, $password, $meetingID)
-	{
-		$param['meetingID'] = $meetingID;
-		$param['name']		= $name;
-		$param['password']	= $password;
-		$url = BigBlueButtonClass::joinMeeting($param);
-		return redirect($url);
-	 	header("Location:".$url);
-		// echo $url;
-	}
-
-
-	public function closeMeeting($password, $meetingID)
-	{
-		$param['meetingID'] 		 = $meetingID;
-		$param['moderator_password'] = $password;
-		$response = BigBlueButtonClass::closeMeeting($param);
-
-	 	return redirect('/meeting/list')->with('status', $response->getMessage());
-
-		echo $response->getReturnCode().'<br>';
-		echo $response->getMessageKey().'<br>';
-		echo $response->getMessage().'<br>';
-		print "<pre>";
-		print_r($response);
 	}
 
 
