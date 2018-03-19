@@ -17,7 +17,7 @@ class Subscriber extends Model
     protected $table = 'subscribers';
 
 	protected $fillable = [
-		'user_id',
+		'subscriber_id',
 		'meeting_id',
 		'hash',
 		'isModerator',

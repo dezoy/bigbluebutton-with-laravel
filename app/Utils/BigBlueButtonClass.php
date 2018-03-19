@@ -64,14 +64,14 @@ class BigBlueButtonClass
 		$password	= $param['password'];
 		$bbb = new BigBlueButton();
 		$joinMeetingParams = new JoinMeetingParameters($meetingID, $name, $password); // $moderator_password for moderator
-		if ( ! empty($param['meetingID']) ){
-			$joinMeetingParams->setUsername();
+		if ( ! empty($param['userID']) ){
+			$joinMeetingParams->setUserId($param['userID']);
 		}
 		if ( ! empty($param['createTime']) ){
-			$joinMeetingParams->setCreationTime();
+			$joinMeetingParams->setCreationTime($param['createTime']);
 		}
 		$joinMeetingParams->setRedirect(true);
-		
+
 		$url = $bbb->getJoinMeetingURL($joinMeetingParams);
 
 		return $url;

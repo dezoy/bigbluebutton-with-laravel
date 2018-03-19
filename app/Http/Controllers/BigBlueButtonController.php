@@ -52,6 +52,7 @@ class BigBlueButtonController extends Controller
 
 		$url = BigBlueButtonClass::joinMeeting([
 			'meetingID' => $meeting->meetingId,
+			'userID'	=> $subscriber->subscriber_id,
 			'fullname'	=> $subscriber->fullname,
 			'password'	=> $meeting->moderator_password,
 			'createTime'=> $meeting->createTime
