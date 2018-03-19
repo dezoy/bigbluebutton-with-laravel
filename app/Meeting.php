@@ -45,13 +45,13 @@ class Meeting extends Model
 
 	public function subscriber()
     {
-        return $this->hasOne('App\Subscriber', 'meeting_id');
+        return $this->hasOne('App\Subscriber', 'meeting_id', 'id');
     }
 
 
 	public function subscribers()
     {
-        return $this->hasMany('App\Subscriber', 'meeting_id');
+        return $this->hasMany('App\Subscriber', 'meeting_id', 'id');
     }
 
 }
