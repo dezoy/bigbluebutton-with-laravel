@@ -10,13 +10,15 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get( '/join/{hash}',	'BigBlueButtonController@joinMeeting')->name('meeting.join');
+
 Route::group(['middleware' => 'auth'], function () {
 	Route::get('/', function () {
 	    //return view('welcome');
 		return redirect("/meeting/list");
 	});
 
-	Route::get( '/join/{hash}',	'BigBlueButtonController@joinMeeting')->name('meeting.join');
 
 
 	// Route::get( '/meetings',		'BigBlueButtonController@getMeetings')->name('meetings');
