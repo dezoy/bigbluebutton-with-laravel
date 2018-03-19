@@ -49,31 +49,13 @@ class APIController extends Controller
 		$func_name = $params['action'].'Meeting';
 		if (method_exists($this, $func_name) ){
 			return $this->$func_name();
+
 		} else {
 			return response()->json([
 				'success' => false,
 				'message' => 'Action not exists'
 			]);
 		}
-
-		// switch ($params['action']){
-		// 	case 'create':
-		// 		$this->createMeeting();
-		//
-		// 		break;
-		// 	case 'delete':
-		// 		$this->deleteMeeting();
-		//
-		// 		break;
-		// 	case 'join':
-		// 		$this->joinMeeting();
-		//
-		// 		break;
-		// 	case 'unjoin':
-		// 		$this->unjoinMeeting();
-		//
-		// 		break;
-		// }
 	}
 
 
@@ -111,7 +93,7 @@ class APIController extends Controller
 		return response()->json([
 			'success' => true,
 			'message' => 'meeting created',
-			'data' 	  => $meeting->toArray()
+			'data' 	  => ['meetingId' => $meeting->meetingId]
 		]);
 
 	}
