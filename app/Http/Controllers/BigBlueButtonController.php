@@ -21,7 +21,7 @@ class BigBlueButtonController extends Controller
 	public function createMeeting($meeting)
 	{
 		$response = BigBlueButtonClass::createMeeting([
-			'meetingID' 			=> $meeting->meetingID,
+			'meetingID' 			=> $meeting->meetingId,
 			'meetingName'			=> $meeting->title,
 			'attendee_password'		=> $meeting->attendee_password,
 			'moderator_password'	=> $meeting->moderator_password,
@@ -50,16 +50,8 @@ class BigBlueButtonController extends Controller
 			}
 		}
 
-print_r($meeting->toArray());
-print_r([
-	'meetingID' => $meeting->meetingID,
-	'fullname'	=> $subscriber->fullname,
-	'password'	=> $meeting->moderator_password,
-	'createTime'=> $meeting->createTime
-]);
-die();
 		$url = BigBlueButtonClass::joinMeeting([
-			'meetingID' => $meeting->meetingID,
+			'meetingID' => $meeting->meetingId,
 			'fullname'	=> $subscriber->fullname,
 			'password'	=> $meeting->moderator_password,
 			'createTime'=> $meeting->createTime
