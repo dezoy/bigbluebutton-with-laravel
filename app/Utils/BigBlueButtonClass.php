@@ -67,7 +67,11 @@ class BigBlueButtonClass
 		if ( ! empty($param['meetingID']) ){
 			$joinMeetingParams->setUsername();
 		}
+		if ( ! empty($param['createTime']) ){
+			$joinMeetingParams->setCreationTime();
+		}
 		$joinMeetingParams->setRedirect(true);
+		
 		$url = $bbb->getJoinMeetingURL($joinMeetingParams);
 
 		return $url;
