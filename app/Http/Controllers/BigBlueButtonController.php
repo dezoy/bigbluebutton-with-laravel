@@ -41,9 +41,6 @@ class BigBlueButtonController extends Controller
 	{
 		$subscriber = Subscriber::where('hash', $userHash)->with('meeting')->first();
 		$meeting 	= $subscriber->meeting;
-		// $subscriber = $query->first();
-		print_r($meeting->toArray());
-		die();
 		if (empty($meeting->createTime) ){
 			// Moderator has not joined yet
 			if ($subscriber->isModerator) {
