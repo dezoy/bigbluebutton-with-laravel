@@ -20,7 +20,7 @@ class CreateMeetingsTable extends Migration
 			$table->string('title')->default('');
 			$table->string('attendee_password')->default('');
 			$table->string('moderator_password')->default('');
-			$table->integer('createTime')->default(0);
+			$table->bigInteger('createTime')->default(0);
 			$table->integer('duration');
 			$table->string('urlLogout')->default('');
 			$table->tinyInteger('isRecordingTrue');
