@@ -42,4 +42,16 @@ class Meeting extends Model
         return $this->belongsTo('App\User', 'id', 'user_id');
     }
 
+
+	public function subscriber()
+    {
+        return $this->hasOne('App\Subscriber', 'meeting_id');
+    }
+
+
+	public function subscribers()
+    {
+        return $this->hasMany('App\Subscriber', 'meeting_id');
+    }
+
 }

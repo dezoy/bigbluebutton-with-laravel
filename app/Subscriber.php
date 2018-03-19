@@ -37,4 +37,10 @@ class Subscriber extends Model
         return $this->belongsTo('App\User', 'id', 'user_id');
     }
 
+
+	public function meeting()
+    {
+        return $this->hasOne('App\Meeting', 'id', 'meeting_id');
+    }
+
 }
