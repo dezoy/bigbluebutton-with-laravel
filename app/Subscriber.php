@@ -40,7 +40,7 @@ class Subscriber extends Model
 
 	public function meeting()
     {
-        return $this->hasOne('App\Meeting', 'meeting_id');
+        return $this->hasOne('App\Meeting', 'id', 'meeting_id');
     }
 
 }
