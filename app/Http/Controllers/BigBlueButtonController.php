@@ -50,6 +50,7 @@ class BigBlueButtonController extends Controller
 			}
 		}
 
+print_r($meeting->toArray());
 print_r([
 	'meetingID' => $meeting->meetingID,
 	'fullname'	=> $subscriber->fullname,
