@@ -14,7 +14,7 @@ class Subscriber extends Model
      *
      * @var string
      */
-    protected $table = 'meetings';
+    protected $table = 'subscribers';
 
 	protected $fillable = [
 		'user_id',
