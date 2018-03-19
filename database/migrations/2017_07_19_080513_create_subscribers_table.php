@@ -17,7 +17,7 @@ class CreateSubscribersTable extends Migration
                 $table->increments('id');
                 $table->string('hash')->default('');
                 $table->integer('meeting_id')->default(0);
-                $table->integer('user_id')->default(0);
+                $table->integer('subscriber_id')->default(0);
                 $table->tinyInteger('isModerator')->default(0);
                 $table->string('fullname')->default('');
 
