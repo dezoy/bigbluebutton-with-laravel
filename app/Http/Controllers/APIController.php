@@ -10,6 +10,7 @@ use Validator;
 use Illuminate\Support\Facades\Crypt;
 use App\Utils\BigBlueButtonClass;
 use App\Meeting;
+use App\Subscriber;
 
 class APIController extends Controller
 {
