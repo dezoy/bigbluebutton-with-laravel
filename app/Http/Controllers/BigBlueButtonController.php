@@ -30,7 +30,7 @@ class BigBlueButtonController extends Controller
 			'isRecordingTrue'		=> $meeting->isRecordingTrue
 		]);
 
-		$meeting->createTime = $response->getCreateTime();
+		$meeting->createTime = $response->getCreationTime();
 		$meeting->save();
 
 		return $meeting;
